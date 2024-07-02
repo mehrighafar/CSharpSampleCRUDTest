@@ -1,0 +1,6 @@
+@CSharpSampleCRUDTest.API_HostAddress = http://localhost:5179
+
+GET {{CSharpSampleCRUDTest.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
