@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="libphonenumber-csharp" Version="8.13.39" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CSharpSampleCRUDTest.DataAccess\CSharpSampleCRUDTest.DataAccess.csproj" />
+    <ProjectReference Include="..\CSharpSampleCRUDTest.Domain\CSharpSampleCRUDTest.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

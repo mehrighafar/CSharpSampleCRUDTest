@@ -1,0 +1,12 @@
+services:
+  csharp-sample-crudtest-api:
+    image: csharp-sample-crudtest-api
+    ports:
+      - "5003:8080"  
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo
+    ports:
+      - "27018:27017"   

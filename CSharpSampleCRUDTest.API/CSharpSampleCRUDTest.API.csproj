@@ -9,8 +9,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="EventDriven.DependencyInjection.URF.Mongo" Version="1.2.2" />
+    <PackageReference Include="libphonenumber-csharp" Version="8.13.39" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.6" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CSharpSampleCRUDTest.DataAccess\CSharpSampleCRUDTest.DataAccess.csproj" />
+    <ProjectReference Include="..\CSharpSampleCRUDTest.Domain\CSharpSampleCRUDTest.Domain.csproj" />
+    <ProjectReference Include="..\CSharpSampleCRUDTest.Logic\CSharpSampleCRUDTest.Logic.csproj" />
   </ItemGroup>
 
 </Project>
