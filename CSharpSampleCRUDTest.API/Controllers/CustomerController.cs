@@ -96,4 +96,25 @@ public class CustomerController : ControllerBase
 
         return Created("~/", resultMapped);
     }
+
+    [HttpPut]
+    public async Task<IActionResult> Update([FromBody] CustomerApiModel model)
+    {
+        CustomerApiModel? resultMapped = null;
+
+        try
+        {
+            var result = await _customerService.UpdateAsync(_mapper.Map<CustomerModel>(model));
+            if (result is null)
+                return StatusCode(StatusCodes.Status500InternalServerError);
+
+            resultMapped = _mapper.Map<CustomerApiModel>(result);
+        }
+        catch
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        return Ok(resultMapped);
+    }
 }

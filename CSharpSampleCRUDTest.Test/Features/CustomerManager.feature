@@ -16,3 +16,9 @@ Scenario: 2.Customer get created successfully
 	Then The 'customer' is created successfully 
 	And The response for creation status code is 201
 	And The response for creation json should be 'customer.json'
+	
+Scenario: 3.Customer get updated successfully
+	Given The repository has customer data
+	When I make a PUT request with 'customer_update.json' to 'customer'
+	Then The response for update status code is 200
+	And The response for update json should be 'customer_update.json'

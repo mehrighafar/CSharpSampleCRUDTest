@@ -58,6 +58,10 @@ public sealed class CustomerWebApiStepDefinitions
                 await Repository.AddAsync(cutomer);
     }
 
+    /// <summary>
+    /// Scenario 1
+    /// </summary>
+    /// 
     [When(@"I make a GET request to '(.*)'")]
     public async Task WhenIMakeAGetRequestTo(string endpoint)
     {
@@ -79,6 +83,9 @@ public sealed class CustomerWebApiStepDefinitions
         Assert.That(expected, Is.EqualTo(actual));
     }
 
+    /// <summary>
+    /// Scenario 2
+    /// </summary>
     [When(@"I make a POST request with '(.*)' to '(.*)'")]
     public async Task WhenIMakeAPostRequestWithTo(string file, string endpoint)
     {
@@ -114,6 +121,32 @@ public sealed class CustomerWebApiStepDefinitions
     {
         var expected = JsonFilesRepo.Files[file];
         var response = await _scenarioContext.Get<HttpResponseMessage>("AddCustomerResponse").Content.ReadAsStringAsync();
+        var actual = response.JsonPrettify();
+        Assert.That(expected, Is.EqualTo(actual));
+    }
+
+    /// <summary>
+    /// Scenario 3
+    /// </summary>
+    [When(@"I make a PUT request with '(.*)' to '(.*)'")]
+    public async Task WhenIMakeAPutRequestWithTo(string file, string endpoint)
+    {
+        var json = JsonFilesRepo.Files[file];
+        var content = new StringContent(json, Encoding.UTF8, MediaTypeNames.Application.Json);
+        _scenarioContext.Add("UpdateCustomerResponse", await Client.PutAsync(endpoint, content));
+    }
+
+    [Then(@"The response for update status code is 200")]
+    public void ThenTheResponseForUpdateStatusCodeIs()
+    {
+        _scenarioContext.Get<HttpResponseMessage>("UpdateCustomerResponse").StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Then(@"The response for update json should be '(.*)'")]
+    public async Task ThenTheResponseForUpdateJsonShouldBe(string file)
+    {
+        var expected = JsonFilesRepo.Files[file];
+        var response = await _scenarioContext.Get<HttpResponseMessage>("UpdateCustomerResponse").Content.ReadAsStringAsync();
         var actual = response.JsonPrettify();
         Assert.That(expected, Is.EqualTo(actual));
     }
