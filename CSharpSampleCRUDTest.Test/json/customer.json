@@ -1,0 +1,9 @@
+{
+  "id": 10,
+  "firstName": "Peter",
+  "lastName": "Sin",
+  "dateOfBirth": "1990-05-02",
+  "phoneNumber": "3197010280432",
+  "email": "peter@example.com",
+  "bankAccountNumber": "123456789101112"
+}

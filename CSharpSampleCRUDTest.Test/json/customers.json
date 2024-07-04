@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "firstName": "Mehri",
+    "lastName": "Abdolghafar",
+    "dateOfBirth": "1990-08-02",
+    "phoneNumber": "3197010280432",
+    "email": "Mehri@example.com",
+    "bankAccountNumber": "123456789101112"
+  },
+  {
+    "id": 2,
+    "firstName": "Elena",
+    "lastName": "Josh",
+    "dateOfBirth": "1980-05-02",
+    "phoneNumber": "3197010282708",
+    "email": "elena@example.com",
+    "bankAccountNumber": "123456789101112"
+  },
+  {
+    "id": 3,
+    "firstName": "Mary",
+    "lastName": "Mill",
+    "dateOfBirth": "1970-07-02",
+    "phoneNumber": "3197010282103",
+    "email": "mary@example.com",
+    "bankAccountNumber": "123456789101112"
+  },
+  {
+    "id": 4,
+    "firstName": "David",
+    "lastName": "Boog",
+    "dateOfBirth": "1960-06-02",
+    "phoneNumber": "3197010281326",
+    "email": "david@example.com",
+    "bankAccountNumber": "123456789101112"
+  },
+  {
+    "id": 5,
+    "firstName": "Sousan",
+    "lastName": "Shemayer",
+    "dateOfBirth": "1995-01-02",
+    "phoneNumber": "3197010281347",
+    "email": "sousan@example.com",
+    "bankAccountNumber": "123456789101112"
+  }
+]
