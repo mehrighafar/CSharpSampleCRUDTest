@@ -117,4 +117,26 @@ public class CustomerController : ControllerBase
 
         return Ok(resultMapped);
     }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete([FromRoute] int id)
+    {
+        int? result;
+
+        try
+        {
+            result = await _customerService.DeleteAsync(id);
+            if (result is null)
+                return StatusCode(StatusCodes.Status404NotFound);
+
+            if (result is 0)
+                return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+        catch
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        return StatusCode(StatusCodes.Status204NoContent);
+    }
 }

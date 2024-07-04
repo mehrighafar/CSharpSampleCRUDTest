@@ -22,3 +22,8 @@ Scenario: 3.Customer get updated successfully
 	When I make a PUT request with 'customer_update.json' to 'customer'
 	Then The response for update status code is 200
 	And The response for update json should be 'customer_update.json'
+
+Scenario: 4.Customer get removed successfully
+	Given The repository has customer data
+	When I make a DELETE request with id '1' to 'customer'
+	Then The response for delete status code is 204	

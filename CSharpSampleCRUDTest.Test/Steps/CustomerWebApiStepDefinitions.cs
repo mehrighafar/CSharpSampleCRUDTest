@@ -150,4 +150,19 @@ public sealed class CustomerWebApiStepDefinitions
         var actual = response.JsonPrettify();
         Assert.That(expected, Is.EqualTo(actual));
     }
+
+    /// <summary>
+    /// Scenario 4
+    /// </summary>
+    [When(@"I make a DELETE request with id '(.*)' to '(.*)'")]
+    public async Task WhenIMakeADeleteRequestWithIdTo(int id, string endpoint)
+    {
+        _scenarioContext.Add("DeleteCustomerResponse", await Client.DeleteAsync($"{endpoint}/{id}"));
+    }
+
+    [Then(@"The response for delete status code is 204")]
+    public void ThenTheResponseForDeleteStatusCodeIs()
+    {
+        _scenarioContext.Get<HttpResponseMessage>("DeleteCustomerResponse").StatusCode.Should().Be(HttpStatusCode.NoContent);
+    }
 }
