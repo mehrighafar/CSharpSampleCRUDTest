@@ -10,3 +10,9 @@ Scenario: 1.Customer get successfully
 	When I make a GET request to 'customer'
 	Then The response for get status code is 200
 	And The response for get json should be 'customers.json'
+
+Scenario: 2.Customer get created successfully
+	When I make a POST request with 'customer.json' to 'customer'
+	Then The 'customer' is created successfully 
+	And The response for creation status code is 201
+	And The response for creation json should be 'customer.json'

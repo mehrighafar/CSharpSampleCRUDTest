@@ -79,4 +79,42 @@ public sealed class CustomerWebApiStepDefinitions
         Assert.That(expected, Is.EqualTo(actual));
     }
 
+    [When(@"I make a POST request with '(.*)' to '(.*)'")]
+    public async Task WhenIMakeAPostRequestWithTo(string file, string endpoint)
+    {
+        var json = JsonFilesRepo.Files[file];
+        var content = new StringContent(json, Encoding.UTF8, MediaTypeNames.Application.Json);
+        _scenarioContext.Add("AddCustomerResponse", await Client.PostAsync(endpoint, content));
+    }
+
+    [Then(@"The '(.*)' is created successfully")]
+    public async Task ThenTheCustomerIsCreatedSuccessfully(string endpoint)
+    {
+        var expected = await _scenarioContext.Get<HttpResponseMessage>("AddCustomerResponse").Content.ReadAsStringAsync();
+        var expectedJsonPrettified = expected.JsonPrettify();
+        var expectedJson = JsonSerializer.Deserialize<CustomerApiModel>(expected, JsonSerializerOptions);
+
+        if (expectedJson is null || expectedJson.Id < 1) { Assert.Fail(); }
+
+        var result = await Client.GetAsync(endpoint + $"/{expectedJson!.Id}");
+        var resultContent = await result.Content.ReadAsStringAsync();
+        var resultJson = resultContent.JsonPrettify();
+
+        Assert.That(expectedJsonPrettified, Is.EqualTo(resultJson));
+    }
+
+    [Then(@"The response for creation status code is 201")]
+    public void ThenTheResponseForCreationStatusCodeIs()
+    {
+        _scenarioContext.Get<HttpResponseMessage>("AddCustomerResponse").StatusCode.Should().Be(HttpStatusCode.Created);
+    }
+
+    [Then(@"The response for creation json should be '(.*)'")]
+    public async Task ThenTheResponseForCreationJsonShouldBe(string file)
+    {
+        var expected = JsonFilesRepo.Files[file];
+        var response = await _scenarioContext.Get<HttpResponseMessage>("AddCustomerResponse").Content.ReadAsStringAsync();
+        var actual = response.JsonPrettify();
+        Assert.That(expected, Is.EqualTo(actual));
+    }
 }

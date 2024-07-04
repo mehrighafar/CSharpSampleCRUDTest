@@ -2,6 +2,7 @@ using AutoMapper;
 using CSharpSampleCRUDTest.API.MapperProfiles;
 using CSharpSampleCRUDTest.API.Models;
 using CSharpSampleCRUDTest.Domain.Interfaces.Services;
+using CSharpSampleCRUDTest.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSharpSampleCRUDTest.API.Controllers;
@@ -73,5 +74,26 @@ public class CustomerController : ControllerBase
         }
 
         return Ok(resultMapped);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Add([FromBody] CustomerApiModel model)
+    {
+        CustomerApiModel? resultMapped = null;
+
+        try
+        {
+            var result = await _customerService.AddAsync(_mapper.Map<CustomerModel>(model));
+            if (result is null)
+                return StatusCode(StatusCodes.Status400BadRequest);
+
+            resultMapped = _mapper.Map<CustomerApiModel>(result);
+        }
+        catch
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        return Created("~/", resultMapped);
     }
 }
