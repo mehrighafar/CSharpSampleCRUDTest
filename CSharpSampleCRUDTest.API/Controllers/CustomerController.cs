@@ -3,6 +3,8 @@ using CSharpSampleCRUDTest.API.MapperProfiles;
 using CSharpSampleCRUDTest.API.Models;
 using CSharpSampleCRUDTest.Domain.Interfaces.Services;
 using CSharpSampleCRUDTest.Domain.Models;
+using CSharpSampleCRUDTest.Logic.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSharpSampleCRUDTest.API.Controllers;
@@ -13,12 +15,15 @@ public class CustomerController : ControllerBase
 {
     private readonly ILogger<CustomerController> _logger;
     private readonly ICustomerService _customerService;
+    private readonly IMediator _mediator;
     private readonly IMapper _mapper;
 
-    public CustomerController(ILogger<CustomerController> logger, ICustomerService customerService)
+    public CustomerController(ILogger<CustomerController> logger, ICustomerService customerService, IMediator mediator)
     {
         _logger = logger;
         _customerService = customerService;
+        _mediator = mediator;
+
         var config = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile(new CustomerApiModelANDCustomerModelMapperProfile());
@@ -32,7 +37,8 @@ public class CustomerController : ControllerBase
         IEnumerable<CustomerApiModel> resultMapped;
         try
         {
-            var result = await _customerService.GetAllAsync();
+            var result = await _mediator.Send(new GetCustomerListQuery());
+            //var result = await _customerService.GetAllAsync();
             if (result is null || result.Count() == 0)
             {
                 // log
@@ -57,7 +63,8 @@ public class CustomerController : ControllerBase
         CustomerApiModel? resultMapped;
         try
         {
-            var result = await _customerService.GetByIdAsync(id);
+            var result = await _mediator.Send(new GetCustomerByIdQuery(id));
+            //var result = await _customerService.GetByIdAsync(id);
             if (result is null)
             {
                 // log

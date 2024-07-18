@@ -17,6 +17,7 @@ builder.Services.AddSwaggerGen();
 // DI
 builder.Services.AddTransient<ICustomerService, CustomerService>();
 builder.Services.AddTransient<ICustomerDataAccessService, CustomerDataAccessService>();
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 // Register repository
 builder.Services.AddSingleton<ICustomerRepository, MongoCustomerRepository>();
