@@ -1,11 +1,16 @@
 using CSharpSampleCRUDTest.API.Configuration;
+using CSharpSampleCRUDTest.API.Middleware;
 using CSharpSampleCRUDTest.DataAccess.DataAccessServices;
 using CSharpSampleCRUDTest.DataAccess.Entities;
 using CSharpSampleCRUDTest.DataAccess.Repositories;
 using CSharpSampleCRUDTest.Domain.Interfaces.DataAccess;
 using CSharpSampleCRUDTest.Domain.Interfaces.Services;
+using CSharpSampleCRUDTest.Logic;
+using CSharpSampleCRUDTest.Logic.PipelineBehaviors;
 using CSharpSampleCRUDTest.Logic.Services;
 using EventDriven.DependencyInjection.URF.Mongo;
+using FluentValidation;
+using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +22,11 @@ builder.Services.AddSwaggerGen();
 // DI
 builder.Services.AddTransient<ICustomerService, CustomerService>();
 builder.Services.AddTransient<ICustomerDataAccessService, CustomerDataAccessService>();
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(AssemblyReference).Assembly));
+builder.Services.AddValidatorsFromAssembly(typeof(AssemblyReference).Assembly);
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
 // Register repository
 builder.Services.AddSingleton<ICustomerRepository, MongoCustomerRepository>();
@@ -47,6 +57,8 @@ app.UseRouting();
 app.MapControllers();
 
 app.MapFallbackToFile("index.html");
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.Run();
 
