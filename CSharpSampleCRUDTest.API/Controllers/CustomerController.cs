@@ -3,6 +3,10 @@ using CSharpSampleCRUDTest.API.MapperProfiles;
 using CSharpSampleCRUDTest.API.Models;
 using CSharpSampleCRUDTest.Domain.Interfaces.Services;
 using CSharpSampleCRUDTest.Domain.Models;
+using CSharpSampleCRUDTest.Logic.Commands;
+using CSharpSampleCRUDTest.Logic.Handlers;
+using CSharpSampleCRUDTest.Logic.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSharpSampleCRUDTest.API.Controllers;
@@ -13,12 +17,15 @@ public class CustomerController : ControllerBase
 {
     private readonly ILogger<CustomerController> _logger;
     private readonly ICustomerService _customerService;
+    private readonly IMediator _mediator;
     private readonly IMapper _mapper;
 
-    public CustomerController(ILogger<CustomerController> logger, ICustomerService customerService)
+    public CustomerController(ILogger<CustomerController> logger, ICustomerService customerService, IMediator mediator)
     {
         _logger = logger;
         _customerService = customerService;
+        _mediator = mediator;
+
         var config = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile(new CustomerApiModelANDCustomerModelMapperProfile());
@@ -30,50 +37,46 @@ public class CustomerController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         IEnumerable<CustomerApiModel> resultMapped;
-        try
-        {
-            var result = await _customerService.GetAllAsync();
-            if (result is null || result.Count() == 0)
-            {
-                // log
 
-                return StatusCode(StatusCodes.Status204NoContent);
-            }
-            resultMapped = _mapper.Map<IEnumerable<CustomerApiModel>>(result);
-        }
-        catch
+        var result = await _mediator.Send(new GetCustomerListQuery());
+        if (result is null || result.Count() == 0)
         {
             // log
 
-            return StatusCode(StatusCodes.Status500InternalServerError);
+            return StatusCode(StatusCodes.Status204NoContent);
         }
 
-        return Ok(resultMapped);
+        try
+        {
+            resultMapped = _mapper.Map<IEnumerable<CustomerApiModel>>(result);
+            return Ok(resultMapped);
+        }
+        catch
+        {
+            //log
+
+            throw new Exception("An error while processing the request occured.");
+        }
     }
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
         CustomerApiModel? resultMapped;
+
+        var result = await _mediator.Send(new GetCustomerByIdQuery(id));
+
         try
         {
-            var result = await _customerService.GetByIdAsync(id);
-            if (result is null)
-            {
-                // log
-
-                return StatusCode(StatusCodes.Status204NoContent);
-            }
             resultMapped = _mapper.Map<CustomerApiModel>(result);
+            return Ok(resultMapped);
         }
         catch
         {
             // log
 
-            return StatusCode(StatusCodes.Status500InternalServerError);
+            throw new Exception("An error while processing the request occured.");
         }
-
-        return Ok(resultMapped);
     }
 
     [HttpPost]
@@ -81,20 +84,17 @@ public class CustomerController : ControllerBase
     {
         CustomerApiModel? resultMapped = null;
 
+        var result = await _mediator.Send(new CreateCustomerCommand(_mapper.Map<CustomerModel>(model)));
+
         try
         {
-            var result = await _customerService.AddAsync(_mapper.Map<CustomerModel>(model));
-            if (result is null)
-                return StatusCode(StatusCodes.Status400BadRequest);
-
             resultMapped = _mapper.Map<CustomerApiModel>(result);
+            return Created("~/", resultMapped);
         }
         catch
         {
-            return StatusCode(StatusCodes.Status500InternalServerError);
+            throw new Exception("An error while processing the request occured.");
         }
-
-        return Created("~/", resultMapped);
     }
 
     [HttpPut]
@@ -102,20 +102,17 @@ public class CustomerController : ControllerBase
     {
         CustomerApiModel? resultMapped = null;
 
+        var result = await _mediator.Send(new CreateCustomerCommand(_mapper.Map<CustomerModel>(model)));
+
         try
         {
-            var result = await _customerService.UpdateAsync(_mapper.Map<CustomerModel>(model));
-            if (result is null)
-                return StatusCode(StatusCodes.Status500InternalServerError);
-
             resultMapped = _mapper.Map<CustomerApiModel>(result);
+            return Ok(resultMapped);
         }
         catch
         {
-            return StatusCode(StatusCodes.Status500InternalServerError);
+            throw new Exception("An error while processing the request occured.");
         }
-
-        return Ok(resultMapped);
     }
 
     [HttpDelete("{id:int}")]
