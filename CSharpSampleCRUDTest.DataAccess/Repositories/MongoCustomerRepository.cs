@@ -1,4 +1,5 @@
 using CSharpSampleCRUDTest.DataAccess.Entities;
+using CSharpSampleCRUDTest.Domain.Exceptions;
 using URF.Core.Abstractions;
 
 namespace CSharpSampleCRUDTest.DataAccess.Repositories;
@@ -15,40 +16,30 @@ public class MongoCustomerRepository : ICustomerRepository
 
     public async Task<IEnumerable<CustomerEntity>> GetAllAsync()
     {
-        try
-        {
-            return await _documentRepository.FindManyAsync();
-        }
-        catch (Exception ex)
-        {
-            throw new Exception(ex.Message);
-        }
+        return await _documentRepository.FindManyAsync();
     }
 
     public async Task<CustomerEntity?> GetByIdAsync(int id)
     {
-        try
-        {
-            var x = await _documentRepository.FindOneAsync(e => e.Id == id);
-            return x;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception(ex.Message);
-        }
+        var x = await _documentRepository.FindOneAsync(e => e.Id == id);
+        return x;
     }
 
     public async Task<CustomerEntity?> AddAsync(CustomerEntity entity)
     {
         var existing = await _documentRepository.FindOneAsync(e => e.Id == entity.Id);
-        if (existing != null) return null;
+        if (existing != null)
+            throw new CustomerExistsException(entity.Id);
+
         return await _documentRepository.InsertOneAsync(entity);
     }
 
     public async Task<CustomerEntity?> UpdateAsync(CustomerEntity entity)
     {
         var existing = await GetByIdAsync(entity.Id);
-        if (existing == null) return null;
+        if (existing == null)
+            throw new CustomerNotFoundException(entity.Id);
+
         return await _documentRepository.FindOneAndReplaceAsync(e => e.Id == entity.Id, entity);
     }
 

@@ -32,94 +32,94 @@ public class CustomerDataAccessService : ICustomerDataAccessService
 
     public async Task<IEnumerable<CustomerModel>> GetAllAsync()
     {
-        try
-        {
-            var result = await _customerRepository.GetAllAsync();
-            if (result is null || result.Count() == 0) { return null; }
+        //try
+        //{
+        var result = await _customerRepository.GetAllAsync();
+        if (result is null || result.Count() == 0) { return null; }
 
-            return _mapper.Map<IEnumerable<CustomerModel>>(result);
-        }
-        catch (Exception ex)
-        {
-            // log with optional message
+        return _mapper.Map<IEnumerable<CustomerModel>>(result);
+        //}
+        //catch (Exception ex)
+        //{
+        // log with optional message
 
-            throw new Exception(ex.Message);
-        }
+        //    throw new Exception(ex.Message);
+        //}
     }
 
     public async Task<CustomerModel> GetByIdAsync(int id)
     {
-        try
-        {
-            var result = await _customerRepository.GetByIdAsync(id);
-            if (result is null) { return null; }
+        //try
+        //{
+        var result = await _customerRepository.GetByIdAsync(id);
+        if (result is null) { return null; }
 
-            return _mapper.Map<CustomerModel>(result);
-        }
-        catch (Exception ex)
-        {
-            // log with optional message
+        return _mapper.Map<CustomerModel>(result);
+        //}
+        //catch (Exception ex)
+        //{
+        //    // log with optional message
 
-            throw new Exception(ex.Message);
-        }
+        //    throw new Exception(ex.Message);
+        //}
 
     }
     public async Task<CustomerModel> AddAsync(CustomerModel model)
     {
-        try
-        {
-            if (!await IsEmailUniqueInDb(model.Id, model.Email))
-                return null;
-            else if (!await IsFirstnameLastnameDateofbirthUnique
-                (model.Id, model.FirstName, model.LastName, model.DateOfBirth))
-                return null;
+        //try
+        //{
+        if (!await IsEmailUniqueInDb(model.Id, model.Email))
+            return null;
+        else if (!await IsFirstnameLastnameDateofbirthUnique
+            (model.Id, model.FirstName, model.LastName, model.DateOfBirth))
+            return null;
 
-            var result = await _customerRepository.AddAsync(_mapper.Map<CustomerEntity>(model));
-            if (result is null) { return null; }
+        var result = await _customerRepository.AddAsync(_mapper.Map<CustomerEntity>(model));
+        if (result is null) { return null; }
 
-            return _mapper.Map<CustomerModel>(result);
-        }
-        catch (Exception ex)
-        {
-            // log with optional message
+        return _mapper.Map<CustomerModel>(result);
+        //}
+        //catch (Exception ex)
+        //{
+        // log with optional message
 
-            throw new Exception(ex.Message);
-        }
+        //    throw new Exception(ex.Message);
+        //}
     }
     public async Task<CustomerModel> UpdateAsync(CustomerModel model)
     {
-        try
-        {
-            if (!await IsEmailUniqueInDb(model.Id, model.Email))
-                return null;
-            else if (!await IsFirstnameLastnameDateofbirthUnique
-                (model.Id, model.FirstName, model.LastName, model.DateOfBirth))
-                return null;
+        //try
+        //{
+        if (!await IsEmailUniqueInDb(model.Id, model.Email))
+            return null;
+        else if (!await IsFirstnameLastnameDateofbirthUnique
+            (model.Id, model.FirstName, model.LastName, model.DateOfBirth))
+            return null;
 
-            var result = await _customerRepository.UpdateAsync(_mapper.Map<CustomerEntity>(model));
-            if (result is null) { return null; }
+        var result = await _customerRepository.UpdateAsync(_mapper.Map<CustomerEntity>(model));
+        if (result is null) { return null; }
 
-            return _mapper.Map<CustomerModel>(result);
-        }
-        catch (Exception ex)
-        {
-            // log with optional message
+        return _mapper.Map<CustomerModel>(result);
+        //}
+        //catch (Exception ex)
+        //{
+        //    // log with optional message
 
-            throw new Exception(ex.Message);
-        }
+        //    throw new Exception(ex.Message);
+        //}
     }
     public async Task<int> DeleteAsync(int id)
     {
-        try
-        {
-            return await _customerRepository.RemoveAsync(id);
-        }
-        catch (Exception ex)
-        {
-            // log with optional message
+        //try
+        //{
+        return await _customerRepository.RemoveAsync(id);
+        //}
+        //catch (Exception ex)
+        //{
+        //    // log with optional message
 
-            throw new Exception(ex.Message);
-        }
+        //    throw new Exception(ex.Message);
+        //}
     }
 
     private async Task<bool> IsEmailUniqueInDb(int id, string email)
