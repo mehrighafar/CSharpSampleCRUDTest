@@ -1,5 +1,4 @@
-﻿using CSharpSampleCRUDTest.API;
-using CSharpSampleCRUDTest.API.Models;
+﻿using CSharpSampleCRUDTest.API.Models;
 using CSharpSampleCRUDTest.DataAccess.Entities;
 using CSharpSampleCRUDTest.DataAccess.Repositories;
 using CSharpSampleCRUDTest.Test.Helpers;
@@ -12,7 +11,7 @@ using System.Text;
 using System.Text.Json;
 using TechTalk.SpecFlow;
 
-namespace CSharpSampleCRUDTest.Test.Steps;
+namespace CSharpSampleCRUDTest.Test.BDD.Steps;
 
 [Binding]
 public sealed class CustomerWebApiStepDefinitions
