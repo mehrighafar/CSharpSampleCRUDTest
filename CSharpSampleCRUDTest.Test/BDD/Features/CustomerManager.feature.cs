@@ -10,7 +10,7 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-namespace CSharpSampleCRUDTest.Test.Features
+namespace CSharpSampleCRUDTest.Test.BDD.Features
 {
     using TechTalk.SpecFlow;
     using System;
@@ -35,7 +35,7 @@ namespace CSharpSampleCRUDTest.Test.Features
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Customer Manager", "As a an operator I wish to be able to Create, Update, Delete customers and list a" +
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "BDD/Features", "Customer Manager", "As a an operator I wish to be able to Create, Update, Delete customers and list a" +
                     "ll customers", ProgrammingLanguage.CSharp, featureTags);
             testRunner.OnFeatureStart(featureInfo);
         }
@@ -78,7 +78,7 @@ namespace CSharpSampleCRUDTest.Test.Features
         {
 #line 4
  #line hidden
-#line 6
+#line 5
   testRunner.Given("I am a client", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
         }
@@ -90,7 +90,7 @@ namespace CSharpSampleCRUDTest.Test.Features
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("1.Customer get successfully", "\tGetting the list of all stored customers", tagsOfScenario, argumentsOfScenario, featureTags);
-#line 8
+#line 7
  this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -103,16 +103,16 @@ namespace CSharpSampleCRUDTest.Test.Features
 #line 4
  this.FeatureBackground();
 #line hidden
-#line 10
+#line 9
   testRunner.Given("The repository has customer data", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 11
+#line 10
   testRunner.When("I make a GET request to \'customer\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 12
+#line 11
   testRunner.Then("The response for get status code is 200", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
-#line 13
+#line 12
   testRunner.And("The response for get json should be \'customers.json\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
@@ -126,7 +126,7 @@ namespace CSharpSampleCRUDTest.Test.Features
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("2.Customer get created successfully", "\tCreating a customer successfully in database", tagsOfScenario, argumentsOfScenario, featureTags);
-#line 15
+#line 14
  this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -139,16 +139,16 @@ namespace CSharpSampleCRUDTest.Test.Features
 #line 4
  this.FeatureBackground();
 #line hidden
-#line 17
+#line 16
   testRunner.When("I make a POST request with \'customer.json\' to \'customer\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 18
+#line 17
   testRunner.Then("The \'customer\' is created successfully", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
-#line 19
+#line 18
   testRunner.And("The response for creation status code is 201", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 20
+#line 19
   testRunner.And("The response for creation json should be \'customer.json\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
@@ -162,7 +162,7 @@ namespace CSharpSampleCRUDTest.Test.Features
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("3.Customer get updated successfully", "\tUpdate a stored customer successfully", tagsOfScenario, argumentsOfScenario, featureTags);
-#line 22
+#line 21
  this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -175,16 +175,16 @@ namespace CSharpSampleCRUDTest.Test.Features
 #line 4
  this.FeatureBackground();
 #line hidden
-#line 24
+#line 23
   testRunner.Given("The repository has customer data", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 25
+#line 24
   testRunner.When("I make a PUT request with \'customer_update.json\' to \'customer\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 26
+#line 25
   testRunner.Then("The response for update status code is 200", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
-#line 27
+#line 26
   testRunner.And("The response for update json should be \'customer_update.json\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
@@ -198,7 +198,7 @@ namespace CSharpSampleCRUDTest.Test.Features
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("4.Customer get removed successfully", "\tDelete a customer successfully from database ", tagsOfScenario, argumentsOfScenario, featureTags);
-#line 29
+#line 28
  this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -211,13 +211,13 @@ namespace CSharpSampleCRUDTest.Test.Features
 #line 4
  this.FeatureBackground();
 #line hidden
-#line 31
+#line 30
   testRunner.Given("The repository has customer data", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 32
+#line 31
   testRunner.When("I make a DELETE request with id \'1\' to \'customer\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 33
+#line 32
   testRunner.Then("The response for delete status code is 204", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }

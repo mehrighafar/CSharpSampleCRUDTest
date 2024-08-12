@@ -2,7 +2,6 @@
 As a an operator I wish to be able to Create, Update, Delete customers and list all customers
 	
 	Background:
-
 		Given I am a client
 
 	Scenario: 1.Customer get successfully

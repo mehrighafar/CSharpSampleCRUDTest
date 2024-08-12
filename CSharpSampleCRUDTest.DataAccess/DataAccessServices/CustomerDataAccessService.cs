@@ -2,16 +2,10 @@
 using CSharpSampleCRUDTest.DataAccess.Entities;
 using CSharpSampleCRUDTest.DataAccess.MapperProfiles;
 using CSharpSampleCRUDTest.DataAccess.Repositories;
+using CSharpSampleCRUDTest.Domain.Exceptions;
 using CSharpSampleCRUDTest.Domain.Interfaces.DataAccess;
-using CSharpSampleCRUDTest.Domain.Interfaces.Services;
 using CSharpSampleCRUDTest.Domain.Models;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using URF.Core.Abstractions;
 
 namespace CSharpSampleCRUDTest.DataAccess.DataAccessServices;
 
@@ -32,42 +26,21 @@ public class CustomerDataAccessService : ICustomerDataAccessService
 
     public async Task<IEnumerable<CustomerModel>> GetAllAsync()
     {
-        //try
-        //{
         var result = await _customerRepository.GetAllAsync();
         if (result is null || result.Count() == 0) { return null; }
 
         return _mapper.Map<IEnumerable<CustomerModel>>(result);
-        //}
-        //catch (Exception ex)
-        //{
-        // log with optional message
-
-        //    throw new Exception(ex.Message);
-        //}
     }
 
     public async Task<CustomerModel> GetByIdAsync(int id)
     {
-        //try
-        //{
         var result = await _customerRepository.GetByIdAsync(id);
-        if (result is null) { return null; }
+        if (result is null) { throw new CustomerNotFoundException(id); }
 
         return _mapper.Map<CustomerModel>(result);
-        //}
-        //catch (Exception ex)
-        //{
-        //    // log with optional message
-
-        //    throw new Exception(ex.Message);
-        //}
-
     }
     public async Task<CustomerModel> AddAsync(CustomerModel model)
     {
-        //try
-        //{
         if (!await IsEmailUniqueInDb(model.Id, model.Email))
             return null;
         else if (!await IsFirstnameLastnameDateofbirthUnique
@@ -78,18 +51,9 @@ public class CustomerDataAccessService : ICustomerDataAccessService
         if (result is null) { return null; }
 
         return _mapper.Map<CustomerModel>(result);
-        //}
-        //catch (Exception ex)
-        //{
-        // log with optional message
-
-        //    throw new Exception(ex.Message);
-        //}
     }
     public async Task<CustomerModel> UpdateAsync(CustomerModel model)
     {
-        //try
-        //{
         if (!await IsEmailUniqueInDb(model.Id, model.Email))
             return null;
         else if (!await IsFirstnameLastnameDateofbirthUnique
@@ -97,29 +61,13 @@ public class CustomerDataAccessService : ICustomerDataAccessService
             return null;
 
         var result = await _customerRepository.UpdateAsync(_mapper.Map<CustomerEntity>(model));
-        if (result is null) { return null; }
+        if (result is null) { throw new CustomerNotFoundException(model.Id); }
 
         return _mapper.Map<CustomerModel>(result);
-        //}
-        //catch (Exception ex)
-        //{
-        //    // log with optional message
-
-        //    throw new Exception(ex.Message);
-        //}
     }
     public async Task<int> DeleteAsync(int id)
     {
-        //try
-        //{
         return await _customerRepository.RemoveAsync(id);
-        //}
-        //catch (Exception ex)
-        //{
-        //    // log with optional message
-
-        //    throw new Exception(ex.Message);
-        //}
     }
 
     private async Task<bool> IsEmailUniqueInDb(int id, string email)
