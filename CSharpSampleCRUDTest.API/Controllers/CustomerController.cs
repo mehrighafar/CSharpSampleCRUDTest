@@ -102,7 +102,7 @@ public class CustomerController : ControllerBase
     {
         CustomerApiModel? resultMapped = null;
 
-        var result = await _mediator.Send(new CreateCustomerCommand(_mapper.Map<CustomerModel>(model)));
+        var result = await _mediator.Send(new UpdateCustomerCommand(_mapper.Map<CustomerModel>(model)));
 
         try
         {
@@ -118,22 +118,31 @@ public class CustomerController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        int? result;
+        var result = await _mediator.Send(new DeleteCustomerCommand(id));
 
         try
         {
-            result = await _customerService.DeleteAsync(id);
-            if (result is null)
-                return StatusCode(StatusCodes.Status404NotFound);
-
-            if (result is 0)
-                return StatusCode(StatusCodes.Status500InternalServerError);
+            return NoContent();
         }
         catch
         {
-            return StatusCode(StatusCodes.Status500InternalServerError);
+            throw new Exception("An error while processing the request occured.");
         }
 
-        return StatusCode(StatusCodes.Status204NoContent);
+        //try
+        //{
+        //    result = await _customerService.DeleteAsync(id);
+        //    if (result is null)
+        //        return StatusCode(StatusCodes.Status404NotFound);
+
+        //    if (result is 0)
+        //        return StatusCode(StatusCodes.Status500InternalServerError);
+        //}
+        //catch
+        //{
+        //    return StatusCode(StatusCodes.Status500InternalServerError);
+        //}
+
+        //return StatusCode(StatusCodes.Status204NoContent);
     }
 }

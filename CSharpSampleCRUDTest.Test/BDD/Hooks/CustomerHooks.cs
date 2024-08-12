@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;
 
-namespace CSharpSampleCRUDTest.Test.Hooks;
+namespace CSharpSampleCRUDTest.Test.BDD.Hooks;
 
 [Binding]
 public class CustomerHooks
