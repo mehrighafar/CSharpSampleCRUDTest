@@ -4,5 +4,4 @@ This is a sample implementation of a dockerized CRUD-based .Net web API, meticul
 
 The robustness of this API is ensured through testing conducted in accordance with Behavior-Driven Development (BDD) methodologies.
 
-### Visitor Badge
 ![](https://vistr.dev/badge?repo=mehrighafar.CSharpSampleCRUDTest) 
