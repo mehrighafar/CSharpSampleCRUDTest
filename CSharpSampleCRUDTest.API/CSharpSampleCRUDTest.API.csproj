@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="dotenv.net" Version="3.2.0" />
     <PackageReference Include="EventDriven.DependencyInjection.URF.Mongo" Version="1.2.2" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.2" />
     <PackageReference Include="libphonenumber-csharp" Version="8.13.39" />

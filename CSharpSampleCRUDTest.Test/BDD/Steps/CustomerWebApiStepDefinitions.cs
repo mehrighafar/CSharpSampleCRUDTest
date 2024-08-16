@@ -1,7 +1,7 @@
 ﻿using CSharpSampleCRUDTest.API.Models;
 using CSharpSampleCRUDTest.DataAccess.Entities;
 using CSharpSampleCRUDTest.DataAccess.Repositories;
-using CSharpSampleCRUDTest.Test.Helpers;
+using CSharpSampleCRUDTest.Test.Entities;
 using CSharpSampleCRUDTest.Test.Repositories;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -16,7 +16,7 @@ namespace CSharpSampleCRUDTest.Test.BDD.Steps;
 [Binding]
 public sealed class CustomerWebApiStepDefinitions
 {
-    private const string BaseAddress = "http://localhost:5111";
+    private string BaseAddress;
     public WebApplicationFactory<Program> Factory { get; }
     public ICustomerRepository Repository { get; }
     public HttpClient Client { get; set; } = null!;
@@ -26,7 +26,8 @@ public sealed class CustomerWebApiStepDefinitions
     private JsonSerializerOptions JsonSerializerOptions { get; } = new JsonSerializerOptions
     {
         AllowTrailingCommas = true,
-        PropertyNameCaseInsensitive = true
+        PropertyNameCaseInsensitive = true,
+        WriteIndented = false
     };
 
     public CustomerWebApiStepDefinitions(
@@ -39,6 +40,7 @@ public sealed class CustomerWebApiStepDefinitions
         Repository = repository;
         JsonFilesRepo = jsonFilesRepo;
         _scenarioContext = scenarioContext;
+        BaseAddress = Environment.GetEnvironmentVariable("API_BASE_ADDRESS")!;
     }
 
     [Given(@"I am a client")]
@@ -77,9 +79,12 @@ public sealed class CustomerWebApiStepDefinitions
     public async Task ThenTheResponseForGetJsonShouldBe(string file)
     {
         var expected = JsonFilesRepo.Files[file];
+        var expectedEntities = JsonSerializer.Deserialize<IEnumerable<TestCustomerEntity>>(expected, JsonSerializerOptions);
+
         var response = await _scenarioContext.Get<HttpResponseMessage>("GetCustomersResponse").Content.ReadAsStringAsync();
-        var actual = response.JsonPrettify();
-        Assert.That(expected, Is.EqualTo(actual));
+        var actualEntities = JsonSerializer.Deserialize<IEnumerable<TestCustomerEntity>>(response, JsonSerializerOptions);
+
+        actualEntities.Should().BeEquivalentTo(expectedEntities);
     }
 
     /// <summary>
@@ -97,16 +102,15 @@ public sealed class CustomerWebApiStepDefinitions
     public async Task ThenTheCustomerIsCreatedSuccessfully(string endpoint)
     {
         var expected = await _scenarioContext.Get<HttpResponseMessage>("AddCustomerResponse").Content.ReadAsStringAsync();
-        var expectedJsonPrettified = expected.JsonPrettify();
-        var expectedJson = JsonSerializer.Deserialize<CustomerApiModel>(expected, JsonSerializerOptions);
+        var expectedEntity = JsonSerializer.Deserialize<UpdateCustomerApiModel>(expected, JsonSerializerOptions);
 
-        if (expectedJson is null || expectedJson.Id < 1) { Assert.Fail(); }
+        if (expectedEntity is null) { Assert.Fail(); }
 
-        var result = await Client.GetAsync(endpoint + $"/{expectedJson!.Id}");
+        var result = await Client.GetAsync(endpoint + $"/{expectedEntity!.Id}");
         var resultContent = await result.Content.ReadAsStringAsync();
-        var resultJson = resultContent.JsonPrettify();
+        var resultEntity = JsonSerializer.Deserialize<UpdateCustomerApiModel>(resultContent, JsonSerializerOptions);
 
-        Assert.That(expectedJsonPrettified, Is.EqualTo(resultJson));
+        resultEntity.Should().BeEquivalentTo(expectedEntity);
     }
 
     [Then(@"The response for creation status code is 201")]
@@ -119,20 +123,32 @@ public sealed class CustomerWebApiStepDefinitions
     public async Task ThenTheResponseForCreationJsonShouldBe(string file)
     {
         var expected = JsonFilesRepo.Files[file];
-        var response = await _scenarioContext.Get<HttpResponseMessage>("AddCustomerResponse").Content.ReadAsStringAsync();
-        var actual = response.JsonPrettify();
-        Assert.That(expected, Is.EqualTo(actual));
+        var expectedEntity = JsonSerializer.Deserialize<TestCustomerEntity>(expected, JsonSerializerOptions);
+
+        var actual = await _scenarioContext.Get<HttpResponseMessage>("AddCustomerResponse").Content.ReadAsStringAsync();
+        var actualEntity = JsonSerializer.Deserialize<TestCustomerEntity>(actual, JsonSerializerOptions);
+
+        actualEntity.Should().BeEquivalentTo(expectedEntity);
     }
 
     /// <summary>
     /// Scenario 3
     /// </summary>
-    [When(@"I make a PUT request with '(.*)' to '(.*)'")]
-    public async Task WhenIMakeAPutRequestWithTo(string file, string endpoint)
+    [When(@"I make a PUT request for a customer got from '(.*)' to '(.*)'")]
+    public async Task WhenIMakeAPutRequestWithTo(string getEndpoint, string putEndpoint)
     {
-        var json = JsonFilesRepo.Files[file];
-        var content = new StringContent(json, Encoding.UTF8, MediaTypeNames.Application.Json);
-        _scenarioContext.Add("UpdateCustomerResponse", await Client.PutAsync(endpoint, content));
+        // Get a customer
+        var response = await Client.GetAsync(getEndpoint);
+        var content = await response.Content.ReadAsStringAsync();
+        var customer = JsonSerializer.Deserialize<IEnumerable<UpdateCustomerApiModel>>(content, JsonSerializerOptions)!.FirstOrDefault();
+
+        // Update a customer
+        customer!.FirstName = "updatedCustomerFirstName";
+        _scenarioContext.Add("UpdatedCustomer", customer);
+        var updateCustomer = JsonSerializer.Serialize(customer, JsonSerializerOptions);
+        var updateContent = new StringContent(updateCustomer, Encoding.UTF8, MediaTypeNames.Application.Json);
+
+        _scenarioContext.Add("UpdateCustomerResponse", await Client.PutAsync(putEndpoint, updateContent));
     }
 
     [Then(@"The response for update status code is 200")]
@@ -141,22 +157,30 @@ public sealed class CustomerWebApiStepDefinitions
         _scenarioContext.Get<HttpResponseMessage>("UpdateCustomerResponse").StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
-    [Then(@"The response for update json should be '(.*)'")]
-    public async Task ThenTheResponseForUpdateJsonShouldBe(string file)
+    [Then(@"The response for update json should be the same sent")]
+    public async Task ThenTheResponseForUpdateJsonShouldBe()
     {
-        var expected = JsonFilesRepo.Files[file];
-        var response = await _scenarioContext.Get<HttpResponseMessage>("UpdateCustomerResponse").Content.ReadAsStringAsync();
-        var actual = response.JsonPrettify();
-        Assert.That(expected, Is.EqualTo(actual));
+        var expectedEntity = _scenarioContext.Get<UpdateCustomerApiModel>("UpdatedCustomer");
+
+        var actual = await _scenarioContext.Get<HttpResponseMessage>("UpdateCustomerResponse").Content.ReadAsStringAsync();
+        var actualEntity = JsonSerializer.Deserialize<UpdateCustomerApiModel>(actual, JsonSerializerOptions);
+
+        actualEntity.Should().BeEquivalentTo(expectedEntity);
     }
 
     /// <summary>
     /// Scenario 4
     /// </summary>
-    [When(@"I make a DELETE request with id '(.*)' to '(.*)'")]
-    public async Task WhenIMakeADeleteRequestWithIdTo(int id, string endpoint)
+    [When(@"I make a DELETE request for a customer got from '(.*)' to '(.*)'")]
+    public async Task WhenIMakeADeleteRequestWithIdTo(string getEndpoint, string deleteEndpoint)
     {
-        _scenarioContext.Add("DeleteCustomerResponse", await Client.DeleteAsync($"{endpoint}/{id}"));
+        // Get a customer
+        var response = await Client.GetAsync(getEndpoint);
+        var content = await response.Content.ReadAsStringAsync();
+        var customer = JsonSerializer.Deserialize<IEnumerable<UpdateCustomerApiModel>>(content, JsonSerializerOptions)!.FirstOrDefault();
+
+        // Delete a customer
+        _scenarioContext.Add("DeleteCustomerResponse", await Client.DeleteAsync($"{deleteEndpoint}/{customer!.Id}"));
     }
 
     [Then(@"The response for delete status code is 204")]

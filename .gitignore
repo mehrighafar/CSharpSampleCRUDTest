@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 docker-compose.exe
+.env

@@ -1,29 +1,25 @@
 using BoDi;
-using CSharpSampleCRUDTest.API.Configuration;
 using CSharpSampleCRUDTest.DataAccess.Repositories;
 using CSharpSampleCRUDTest.Test.Repositories;
+using CSharpSampleCRUDTest.Test.Repositories.Extensions;
+using dotenv.net;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using TechTalk.SpecFlow;
 
 namespace CSharpSampleCRUDTest.Test.BDD.Hooks;
 
 [Binding]
-public class CustomerHooks
+public class CustomerHooks(IObjectContainer objectContainer)
 {
-    private readonly IObjectContainer _objectContainer;
-    private const string AppSettingsFile = "appsettings.json";
-
-    public CustomerHooks(IObjectContainer objectContainer)
-    {
-        _objectContainer = objectContainer;
-    }
+    private readonly IObjectContainer _objectContainer = objectContainer;
 
     [BeforeScenario]
     public async Task RegisterServices()
     {
+        DotEnv.Load();
+
         var factory = GetWebApplicationFactory();
         await ClearData(factory);
         _objectContainer.RegisterInstanceAs(factory);
@@ -33,21 +29,24 @@ public class CustomerHooks
         _objectContainer.RegisterInstanceAs(repository);
     }
 
-    private WebApplicationFactory<Program> GetWebApplicationFactory() =>
+    private static WebApplicationFactory<Program> GetWebApplicationFactory() =>
         new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
             {
-                IConfigurationSection? configSection = null;
                 builder.ConfigureAppConfiguration((context, config) =>
                 {
-                    config.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), AppSettingsFile));
-                    configSection = context.Configuration.GetSection(nameof(CSharpSampleCRUDTestDatabaseSettings));
+                    DotEnv.Load();
+
+                    config.AddEnvironmentVariables();
                 });
                 builder.ConfigureTestServices(services =>
-                    services.Configure<CSharpSampleCRUDTestDatabaseSettings>(configSection));
+                {
+                    services.AddMongoDatabase();
+                    services.AddRepository();
+                });
             });
 
-    private async Task ClearData(
+    private static async Task ClearData(
         WebApplicationFactory<Program> factory)
     {
         if (factory.Services.GetService(typeof(ICustomerRepository))
