@@ -29,8 +29,8 @@ jobs:
         options: >-
           --health-cmd "pgrep mongod" 
           --health-interval 10s
-          --health-timeout 10s
-          --health-retries 10
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
     - name: Checkout code
@@ -50,7 +50,7 @@ jobs:
     - name: Wait for MongoDB to become available
       run: |
         # Wait until MongoDB service is up and running
-        for i in {1..30}; do
+        for i in {1..10}; do
         if mongo --eval "db.runCommand({ connectionStatus: 1 })" > /dev/null 2>&1; then
             echo "MongoDB is up and running"
             break
@@ -65,10 +65,10 @@ jobs:
 
 
     - name: Build Docker Image
-      run: docker build -t CSharpSampleCRUDTest .
+      run: docker build -t csharpsamplecrudtest .
 
     - name: change image tag
-      run: docker tag CSharpSampleCRUDTest $CSharpSampleCRUDTest_image
+      run: docker tag csharpsamplecrudtest $CSharpSampleCRUDTest_image
 
     - name: Login to Docker Hub
       uses: docker/login-action@v3
