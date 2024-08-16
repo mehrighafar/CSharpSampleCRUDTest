@@ -20,9 +20,9 @@ jobs:
       mongo:
         image: mongo:latest
         ports:
-          - "27017:27017"
+          - "27018:27017"
         options: >-
-          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'"
+          --health-cmd "pgrep mongod" 
           --health-interval 10s
           --health-timeout 10s
           --health-retries 10
