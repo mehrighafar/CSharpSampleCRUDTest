@@ -7,7 +7,7 @@ on:
     - "develop"
 
 env:
-  CSharpSampleCRUDTest_image: '${{ secrets.DOCKER_HUB_USERNAME }}/CSharpSampleCRUDTest'
+  CSharpSampleCRUDTest_image: '${{ secrets.DOCKER_HUB_USERNAME }}/csharpsamplecrudtest'
   
 jobs:
   build:
