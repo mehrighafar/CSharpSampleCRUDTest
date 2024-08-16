@@ -15,6 +15,11 @@ jobs:
     runs-on: ubuntu-latest
 
 
+    env:
+      MONGODB_CONNECTION_STRING: ${{ secrets.MONGODB_CONNECTION_STRING }}
+      MONGODB_DATABASE_NAME: ${{ secrets.MONGODB_DATABASE_NAME }}
+      MONGODB_COLLECTION_NAME: ${{ secrets.MONGODB_COLLECTION_NAME }}
+      API_BASE_ADDRESS: ${{ secrets.API_BASE_ADDRESS }}
 
     services:
       mongo:
