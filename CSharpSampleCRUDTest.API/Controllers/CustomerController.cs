@@ -19,6 +19,7 @@ public class CustomerController : ControllerBase
     private readonly ICustomerService _customerService;
     private readonly IMediator _mediator;
     private readonly IMapper _mapper;
+    private readonly IMapper _updateMapper;
 
     public CustomerController(ILogger<CustomerController> logger, ICustomerService customerService, IMediator mediator)
     {
@@ -31,12 +32,18 @@ public class CustomerController : ControllerBase
             cfg.AddProfile(new CustomerApiModelANDCustomerModelMapperProfile());
         });
         _mapper = new Mapper(config);
+
+        var updateConfig = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile(new UpdateCustomerApiModelANDCustomerModelMapperProfile());
+        });
+        _updateMapper = new Mapper(updateConfig);
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        IEnumerable<CustomerApiModel> resultMapped;
+        IEnumerable<UpdateCustomerApiModel> resultMapped;
 
         var result = await _mediator.Send(new GetCustomerListQuery());
         if (result is null || result.Count() == 0)
@@ -48,7 +55,7 @@ public class CustomerController : ControllerBase
 
         try
         {
-            resultMapped = _mapper.Map<IEnumerable<CustomerApiModel>>(result);
+            resultMapped = _updateMapper.Map<IEnumerable<UpdateCustomerApiModel>>(result);
             return Ok(resultMapped);
         }
         catch
@@ -59,16 +66,16 @@ public class CustomerController : ControllerBase
         }
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById([FromRoute] int id)
+    [HttpGet("{id:Guid}")]
+    public async Task<IActionResult> GetById([FromRoute] Guid id)
     {
-        CustomerApiModel? resultMapped;
+        UpdateCustomerApiModel? resultMapped;
 
         var result = await _mediator.Send(new GetCustomerByIdQuery(id));
 
         try
         {
-            resultMapped = _mapper.Map<CustomerApiModel>(result);
+            resultMapped = _updateMapper.Map<UpdateCustomerApiModel>(result);
             return Ok(resultMapped);
         }
         catch
@@ -82,13 +89,13 @@ public class CustomerController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Add([FromBody] CustomerApiModel model)
     {
-        CustomerApiModel? resultMapped = null;
+        UpdateCustomerApiModel? resultMapped = null;
 
         var result = await _mediator.Send(new CreateCustomerCommand(_mapper.Map<CustomerModel>(model)));
 
         try
         {
-            resultMapped = _mapper.Map<CustomerApiModel>(result);
+            resultMapped = _updateMapper.Map<UpdateCustomerApiModel>(result);
             return Created("~/", resultMapped);
         }
         catch
@@ -98,15 +105,15 @@ public class CustomerController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update([FromBody] CustomerApiModel model)
+    public async Task<IActionResult> Update([FromBody] UpdateCustomerApiModel model)
     {
-        CustomerApiModel? resultMapped = null;
+        UpdateCustomerApiModel? resultMapped = null;
 
-        var result = await _mediator.Send(new UpdateCustomerCommand(_mapper.Map<CustomerModel>(model)));
+        var result = await _mediator.Send(new UpdateCustomerCommand(_updateMapper.Map<CustomerModel>(model)));
 
         try
         {
-            resultMapped = _mapper.Map<CustomerApiModel>(result);
+            resultMapped = _updateMapper.Map<UpdateCustomerApiModel>(result);
             return Ok(resultMapped);
         }
         catch
@@ -115,8 +122,8 @@ public class CustomerController : ControllerBase
         }
     }
 
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete([FromRoute] int id)
+    [HttpDelete("{id:Guid}")]
+    public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
         var result = await _mediator.Send(new DeleteCustomerCommand(id));
 
@@ -128,21 +135,5 @@ public class CustomerController : ControllerBase
         {
             throw new Exception("An error while processing the request occured.");
         }
-
-        //try
-        //{
-        //    result = await _customerService.DeleteAsync(id);
-        //    if (result is null)
-        //        return StatusCode(StatusCodes.Status404NotFound);
-
-        //    if (result is 0)
-        //        return StatusCode(StatusCodes.Status500InternalServerError);
-        //}
-        //catch
-        //{
-        //    return StatusCode(StatusCodes.Status500InternalServerError);
-        //}
-
-        //return StatusCode(StatusCodes.Status204NoContent);
     }
 }

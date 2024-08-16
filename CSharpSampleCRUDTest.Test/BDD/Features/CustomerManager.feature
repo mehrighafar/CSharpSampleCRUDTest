@@ -21,12 +21,12 @@ As a an operator I wish to be able to Create, Update, Delete customers and list 
 	Scenario: 3.Customer get updated successfully
 	Update a stored customer successfully
 		Given The repository has customer data
-		When I make a PUT request with 'customer_update.json' to 'customer'
+		When I make a PUT request for a customer got from 'customer' to 'customer'
 		Then The response for update status code is 200
-		And The response for update json should be 'customer_update.json'
+		And The response for update json should be the same sent
 
 	Scenario: 4.Customer get removed successfully
 	Delete a customer successfully from database 
 		Given The repository has customer data
-		When I make a DELETE request with id '1' to 'customer'
+		When I make a DELETE request for a customer got from 'customer' to 'customer'
 		Then The response for delete status code is 204	
