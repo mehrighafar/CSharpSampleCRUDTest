@@ -8,7 +8,6 @@ on:
 
 env:
   CSharpSampleCRUDTest_image: '${{ secrets.DOCKER_HUB_USERNAME }}/CSharpSampleCRUDTest'
-  MongodbConnectionPort: 27017
   
 jobs:
   build:
@@ -21,7 +20,7 @@ jobs:
       mongo:
         image: mongo:latest
         ports:
-          - $MongodbConnectionPort:27017
+          - 27017:27017
         options: >-
           --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'"
           --health-interval 10s
