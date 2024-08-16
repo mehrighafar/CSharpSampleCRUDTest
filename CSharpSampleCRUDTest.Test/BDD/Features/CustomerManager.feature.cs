@@ -179,13 +179,13 @@ namespace CSharpSampleCRUDTest.Test.BDD.Features
   testRunner.Given("The repository has customer data", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 24
-  testRunner.When("I make a PUT request with \'customer_update.json\' to \'customer\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+  testRunner.When("I make a PUT request for a customer got from \'customer\' to \'customer\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 25
   testRunner.Then("The response for update status code is 200", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 26
-  testRunner.And("The response for update json should be \'customer_update.json\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("The response for update json should be the same sent", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -215,7 +215,7 @@ namespace CSharpSampleCRUDTest.Test.BDD.Features
   testRunner.Given("The repository has customer data", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 31
-  testRunner.When("I make a DELETE request with id \'1\' to \'customer\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+  testRunner.When("I make a DELETE request for a customer got from \'customer\' to \'customer\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 32
   testRunner.Then("The response for delete status code is 204", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
