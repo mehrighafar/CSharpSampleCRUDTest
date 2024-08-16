@@ -20,12 +20,12 @@ jobs:
       mongo:
         image: mongo:latest
         ports:
-          - 27017:27017
+          - "27017:27017"
         options: >-
           --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'"
           --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-timeout 10s
+          --health-retries 10
 
     steps:
     - name: Checkout code
@@ -41,6 +41,14 @@ jobs:
 
     - name: Build
       run: dotnet build --no-restore
+
+    - name: Install MongoDB Client Tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y mongodb-clients
+
+    - name: Print MongoDB Logs
+      run: docker logs $(docker ps -q --filter ancestor=mongo:latest)
 
     - name: Wait for MongoDB to become available
       run: |
