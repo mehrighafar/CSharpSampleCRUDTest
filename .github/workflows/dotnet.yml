@@ -2,9 +2,9 @@ name: Test, Build, and Deploy CSharpSampleCRUDTest.NET APP
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    branches: 
+    - "master"
+    - "develop"
 
 env:
   CSharpSampleCRUDTest_image: '${{ secrets.DOCKER_HUB_USERNAME }}/CSharpSampleCRUDTest'
