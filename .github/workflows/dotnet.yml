@@ -2,13 +2,12 @@ name: Test, Build, and Deploy CSharpSampleCRUDTest.NET APP
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    branches: 
+    - "master"
+    - "develop"
 
 env:
-  CSharpSampleCRUDTest_image: '${{ secrets.DOCKER_HUB_USERNAME }}/CSharpSampleCRUDTest'
-  MongodbConnectionPort: 27017
+  CSharpSampleCRUDTest_image: '${{ secrets.DOCKER_HUB_USERNAME }}/csharpsamplecrudtest'
   
 jobs:
   build:
@@ -16,14 +15,19 @@ jobs:
     runs-on: ubuntu-latest
 
 
+    env:
+      MONGODB_CONNECTION_STRING: ${{ secrets.MONGODB_CONNECTION_STRING }}
+      MONGODB_DATABASE_NAME: ${{ secrets.MONGODB_DATABASE_NAME }}
+      MONGODB_COLLECTION_NAME: ${{ secrets.MONGODB_COLLECTION_NAME }}
+      API_BASE_ADDRESS: ${{ secrets.API_BASE_ADDRESS }}
 
     services:
       mongo:
         image: mongo:latest
         ports:
-          - $MongodbConnectionPort:27017
+          - "27018:27017"
         options: >-
-          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'"
+          --health-cmd "pgrep mongod" 
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -46,7 +50,7 @@ jobs:
     - name: Wait for MongoDB to become available
       run: |
         # Wait until MongoDB service is up and running
-        for i in {1..30}; do
+        for i in {1..10}; do
         if mongo --eval "db.runCommand({ connectionStatus: 1 })" > /dev/null 2>&1; then
             echo "MongoDB is up and running"
             break
@@ -61,10 +65,10 @@ jobs:
 
 
     - name: Build Docker Image
-      run: docker build -t CSharpSampleCRUDTest .
+      run: docker build -t csharpsamplecrudtest .
 
     - name: change image tag
-      run: docker tag CSharpSampleCRUDTest $CSharpSampleCRUDTest_image
+      run: docker tag csharpsamplecrudtest $CSharpSampleCRUDTest_image
 
     - name: Login to Docker Hub
       uses: docker/login-action@v3
