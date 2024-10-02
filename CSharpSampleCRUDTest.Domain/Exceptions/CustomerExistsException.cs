@@ -1,6 +1,4 @@
-﻿using BadRequestException = CSharpSampleCRUDTest.Domain.Exceptions.BadRequestException;
-
-namespace CSharpSampleCRUDTest.Domain.Exceptions;
+﻿namespace CSharpSampleCRUDTest.Domain.Exceptions;
 
 public sealed class CustomerExistsException : BadRequestException
 {
