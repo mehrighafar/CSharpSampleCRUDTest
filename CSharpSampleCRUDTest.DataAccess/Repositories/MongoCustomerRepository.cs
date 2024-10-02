@@ -1,6 +1,6 @@
 using CSharpSampleCRUDTest.DataAccess.Entities;
 using CSharpSampleCRUDTest.Domain.Exceptions;
-using URF.Core.Abstractions;
+using MongoDB.Driver;
 
 namespace CSharpSampleCRUDTest.DataAccess.Repositories;
 
