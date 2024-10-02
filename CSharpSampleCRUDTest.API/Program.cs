@@ -1,19 +1,17 @@
-using CSharpSampleCRUDTest.API.Configuration;
+using CSharpSampleCRUDTest.API.Extensions;
 using CSharpSampleCRUDTest.API.Middleware;
 using CSharpSampleCRUDTest.DataAccess.DataAccessServices;
-using CSharpSampleCRUDTest.DataAccess.Entities;
-using CSharpSampleCRUDTest.DataAccess.Repositories;
 using CSharpSampleCRUDTest.Domain.Interfaces.DataAccess;
 using CSharpSampleCRUDTest.Domain.Interfaces.Services;
 using CSharpSampleCRUDTest.Logic;
 using CSharpSampleCRUDTest.Logic.PipelineBehaviors;
 using CSharpSampleCRUDTest.Logic.Services;
-using EventDriven.DependencyInjection.URF.Mongo;
+using dotenv.net;
 using FluentValidation;
 using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
-
+DotEnv.Load();
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -28,10 +26,9 @@ builder.Services.AddValidatorsFromAssembly(typeof(AssemblyReference).Assembly);
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
-// Register repository
-builder.Services.AddSingleton<ICustomerRepository, MongoCustomerRepository>();
-builder.Services.AddMongoDbSettings<CSharpSampleCRUDTestDatabaseSettings, CustomerEntity>(builder.Configuration);
-
+// Register repository   
+builder.Services.AddMongoDatabase();
+builder.Services.AddRepository();
 
 var app = builder.Build();
 

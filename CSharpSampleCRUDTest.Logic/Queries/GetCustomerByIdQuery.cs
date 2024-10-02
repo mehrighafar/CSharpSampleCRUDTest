@@ -3,4 +3,4 @@ using MediatR;
 
 namespace CSharpSampleCRUDTest.Logic.Queries;
 
-public record GetCustomerByIdQuery(int Id) : IRequest<CustomerModel>;
+public record GetCustomerByIdQuery(Guid Id) : IRequest<CustomerModel>;

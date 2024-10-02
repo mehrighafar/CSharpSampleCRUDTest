@@ -29,7 +29,7 @@ public class CustomerService : ICustomerService
         }
     }
 
-    public async Task<CustomerModel> GetByIdAsync(int id)
+    public async Task<CustomerModel> GetByIdAsync(Guid id)
     {
         try
         {
@@ -85,7 +85,7 @@ public class CustomerService : ICustomerService
         }
 
     }
-    public async Task<int> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
         try
         {

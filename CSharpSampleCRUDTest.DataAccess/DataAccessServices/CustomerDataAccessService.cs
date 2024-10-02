@@ -32,7 +32,7 @@ public class CustomerDataAccessService : ICustomerDataAccessService
         return _mapper.Map<IEnumerable<CustomerModel>>(result);
     }
 
-    public async Task<CustomerModel> GetByIdAsync(int id)
+    public async Task<CustomerModel> GetByIdAsync(Guid id)
     {
         var result = await _customerRepository.GetByIdAsync(id);
         if (result is null) { throw new CustomerNotFoundException(id); }
@@ -63,14 +63,16 @@ public class CustomerDataAccessService : ICustomerDataAccessService
         var result = await _customerRepository.UpdateAsync(_mapper.Map<CustomerEntity>(model));
         if (result is null) { throw new CustomerNotFoundException(model.Id); }
 
-        return _mapper.Map<CustomerModel>(result);
+        //return _mapper.Map<CustomerModel>(result);
+        return model;
     }
-    public async Task<int> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
-        return await _customerRepository.RemoveAsync(id);
+        var result = await _customerRepository.RemoveAsync(id);
+        return result.IsAcknowledged;
     }
 
-    private async Task<bool> IsEmailUniqueInDb(int id, string email)
+    private async Task<bool> IsEmailUniqueInDb(Guid id, string email)
     {
         var customers = await _customerRepository.GetAllAsync();
         var emails = customers.Where(item => item.Id != id).Select(x => x.Email).ToList();
@@ -79,7 +81,7 @@ public class CustomerDataAccessService : ICustomerDataAccessService
         return true;
     }
 
-    private async Task<bool> IsFirstnameLastnameDateofbirthUnique(int id, string firstName, string lastName, DateOnly dateOfBirth)
+    private async Task<bool> IsFirstnameLastnameDateofbirthUnique(Guid id, string firstName, string lastName, DateOnly dateOfBirth)
     {
         var customers = await _customerRepository.GetAllAsync();
         var list = customers.Where(item => item.Id != id).Select(item => new

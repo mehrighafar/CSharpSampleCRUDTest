@@ -2,4 +2,4 @@
 
 namespace CSharpSampleCRUDTest.Logic.Commands;
 
-public record DeleteCustomerCommand(int Id) : IRequest<int>;
+public record DeleteCustomerCommand(Guid Id) : IRequest<bool>;
