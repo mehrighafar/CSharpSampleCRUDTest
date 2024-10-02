@@ -1,5 +1,4 @@
 ﻿using CSharpSampleCRUDTest.Domain.Interfaces.DataAccess;
-using CSharpSampleCRUDTest.Domain.Models;
 using CSharpSampleCRUDTest.Logic.Commands;
 using MediatR;
 
