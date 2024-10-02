@@ -46,5 +46,3 @@ public class MongoCustomerRepository : ICustomerRepository
     public async Task<int> RemoveAsync(int id) =>
         await _documentRepository.DeleteOneAsync(e => e.Id == id);
 }
-
-public class ConcurrencyException : Exception { }
