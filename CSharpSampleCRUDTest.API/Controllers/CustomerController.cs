@@ -43,6 +43,7 @@ public class CustomerController : ControllerBase
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(IEnumerable<CustomerApiModel>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetById([FromRoute] Guid id)
+
     {
         var result = await _mediator.Send(new GetCustomerByIdQuery(id));
 
@@ -76,6 +77,7 @@ public class CustomerController : ControllerBase
     [HttpDelete("{id:int}")]
     [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
+
     {
         await _mediator.Send(new DeleteCustomerCommand(id));
 
