@@ -14,66 +14,73 @@ namespace CSharpSampleCRUDTest.API.Controllers;
 public class CustomerController : ControllerBase
 {
     private readonly IMediator _mediator;
-    private readonly Mapper _mapper;
+    private readonly Mapper _updateApiMapper;
+    private readonly Mapper _apiMapper;
 
     public CustomerController(IMediator mediator)
     {
         _mediator = mediator;
 
-        var config = new MapperConfiguration(cfg =>
+        var configUpdateApiMapper = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile(new UpdateCustomerApiModelANDCustomerModelMapperProfile());
+        });
+        _updateApiMapper = new Mapper(configUpdateApiMapper);
+
+        var configApiMapper = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile(new CustomerApiModelANDCustomerModelMapperProfile());
         });
-        _mapper = new Mapper(config);
+        _apiMapper = new Mapper(configApiMapper);
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<CustomerApiModel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<UpdateCustomerApiModel>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll()
     {
         var result = await _mediator.Send(new GetCustomerListQuery());
         if (result is null || result.Count() == 0)
             return StatusCode(StatusCodes.Status204NoContent);
 
-        var resultMapped = _mapper.Map<IEnumerable<CustomerApiModel>>(result);
+        var resultMapped = _updateApiMapper.Map<IEnumerable<UpdateCustomerApiModel>>(result);
 
         return Ok(resultMapped);
     }
 
-    [HttpGet("{id:int}")]
-    [ProducesResponseType(typeof(IEnumerable<CustomerApiModel>), StatusCodes.Status200OK)]
+    [HttpGet("{id:Guid}")]
+    [ProducesResponseType(typeof(UpdateCustomerApiModel), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetById([FromRoute] Guid id)
     {
         var result = await _mediator.Send(new GetCustomerByIdQuery(id));
 
-        var resultMapped = _mapper.Map<CustomerApiModel>(result);
+        var resultMapped = _updateApiMapper.Map<UpdateCustomerApiModel>(result);
 
         return Ok(resultMapped);
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(CustomerApiModel), StatusCodes.Status201Created)]
-    public async Task<IActionResult> Add([FromBody] CustomerApiModel model)
+    [ProducesResponseType(typeof(UpdateCustomerApiModel), StatusCodes.Status201Created)]
+    public async Task<IActionResult> Add([FromBody] CustomerModel model)
     {
-        var result = await _mediator.Send(new CreateCustomerCommand(_mapper.Map<CustomerModel>(model)));
+        var result = await _mediator.Send(new CreateCustomerCommand(_apiMapper.Map<CustomerModel>(model)));
 
-        var resultMapped = _mapper.Map<CustomerApiModel>(result);
+        var resultMapped = _updateApiMapper.Map<UpdateCustomerApiModel>(result);
 
         return Created("~/", resultMapped);
     }
 
     [HttpPut]
-    [ProducesResponseType(typeof(CustomerApiModel), StatusCodes.Status200OK)]
-    public async Task<IActionResult> Update([FromBody] CustomerApiModel model)
+    [ProducesResponseType(typeof(UpdateCustomerApiModel), StatusCodes.Status200OK)]
+    public async Task<IActionResult> Update([FromBody] UpdateCustomerApiModel model)
     {
-        var result = await _mediator.Send(new UpdateCustomerCommand(_mapper.Map<CustomerModel>(model)));
+        var result = await _mediator.Send(new UpdateCustomerCommand(_updateApiMapper.Map<CustomerModel>(model)));
 
-        var resultMapped = _mapper.Map<CustomerApiModel>(result);
+        var resultMapped = _updateApiMapper.Map<UpdateCustomerApiModel>(result);
 
         return Ok(resultMapped);
     }
 
-    [HttpDelete("{id:int}")]
+    [HttpDelete("{id:Guid}")]
     [ProducesResponseType(typeof(NoContentResult), StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
